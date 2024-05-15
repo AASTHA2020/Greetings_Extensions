@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
   const bgVideo = document.getElementById("bg-video");
-  const locationIcon = document.getElementById("location-icon"); // Reference to location icon
+  const locationIcon = document.getElementById("location-icon");
 
-  function updateTime() {
-    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  function updateTime(timeZone = null) {
+    const userTimeZone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     fetch(`http://worldtimeapi.org/api/timezone/${userTimeZone}`)
       .then(response => response.json())
       .then(data => {
@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
         greetingText.textContent = greeting;
         timeDisplay.textContent = formattedTime;
 
-        // Determine video based on time of day and update video source
         let videoSource = '';
         if (hours < 12) {
           videoSource = 'morning.mp4';
@@ -30,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         bgVideo.setAttribute('src', videoSource);
 
-        // Show location icon if geolocation is available
         if (navigator.geolocation) {
           locationIcon.style.display = 'inline-block';
         } else {
@@ -39,18 +37,40 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(error => {
         console.error("Error fetching time:", error);
-        // Default to India's time if fetching fails
         updateTime("Asia/Kolkata");
       });
   }
 
-  // Call updateTime initially to avoid delay
-  updateTime();
+  function getLocationAndTime() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          // Use a geolocation to timezone API to get the timezone from coordinates
+          fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+            .then(response => response.json())
+            .then(data => {
+              const userTimeZone = data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+              updateTime(userTimeZone);
+            })
+            .catch(error => {
+              console.error("Error fetching timezone:", error);
+              updateTime(); // Fall back to default method
+            });
+        },
+        error => {
+          console.error("Error getting location:", error);
+          updateTime(); // Fall back to default method
+        }
+      );
+    } else {
+      updateTime(); // Fall back to default method if geolocation is not supported
+    }
+  }
 
-  // Call updateTime every minute to keep the time updated
-  setInterval(updateTime, 60000);
+  getLocationAndTime();
+  setInterval(getLocationAndTime, 60000);
 
-  // Fetch quote from Quotable API
   fetch("https://api.quotable.io/random")
     .then(response => response.json())
     .then(data => {
@@ -61,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching quote:", error);
     });
 
-  // Function to get appropriate greeting based on time
   function getGreeting(hours) {
     if (hours < 12) {
       return "Good Morning, Rise and Shine!🌻";

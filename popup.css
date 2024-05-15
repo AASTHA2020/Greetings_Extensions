@@ -35,7 +35,7 @@ body {
 
 #greeting-text {
   font-size: 45px;
-  color: black;
+  color: rgb(12, 1, 1);
   font-family: 'Pacifico', cursive;
   animation: neon-glow 1.5s;
   margin-bottom: 2px;
@@ -88,13 +88,19 @@ body {
 #quote-text {
   font-size: 24px;
   font-style: italic;
+  color: black;
   margin-bottom: 5px;
-  font-weight: 600;
+  font-weight: 550;
   font-family: 'Times New Roman', Times, serif;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), /* White glow with reduced opacity */
+               0 0 10px rgba(255, 255, 255, 0.521),
+               0 0 15px rgba(255, 255, 255, 0.3);
 }
+
 
 #quote-author {
   font-size: 20px;
+  color: black;
   font-family: 'Times New Roman', Times, serif;
 }
 

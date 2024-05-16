@@ -46,5 +46,5 @@ Once the extension is installed, follow these steps to use it:
 3. To search Google, simply enter your query in the search box provided on the new tab page and press Enter.
 
 ## Support 🤝
-For any questions, issues, or feature requests, feel free to reach out to me. You can submit an issue on [GitHub](link to issue tracker), and I'll be happy to assist you.
+For any questions, issues, or feature requests, feel free to reach out to me. You can submit an issue on [GitHub](https://github.com/AASTHA2020/Greetings_Extensions/issues), and I'll be happy to assist you.
 
